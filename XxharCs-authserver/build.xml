@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="authserver" default="compile" basedir=".">
+
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+	<property name="classes.dir" value="build/classes" />
+	<property name="build.dir" value="build" />
+	
+	<path id="libraries.path">    
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+	
+	<target name="compile" depends="clean" description="Compile project.">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+			<classpath refid="libraries.path"/>
+		</javac>
+	</target>
+	
+	<target name="clean" description="Clean build products.">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="jar" depends="clean, compile" description="Creates jar file.">
+	    <mkdir dir="build/jar"/>
+		<mkdir dir="${classes.dir}/${lib.dir}"/>
+        <copy todir="${classes.dir}/${lib.dir}" flatten="true">
+            <path refid="libraries.path"/>
+        </copy>
+		
+		<manifestclasspath property="manifest.classpath" jarfile="build/jar/${ant.project.name}.jar">
+            <classpath refid="libraries.path"/>
+        </manifestclasspath>
+		
+	    <jar destfile="build/jar/${ant.project.name}.jar" basedir="${classes.dir}">
+	        <manifest>
+	            <attribute name="Main-Class" value="XxharCs.Starter"/>
+				<attribute name="Class-Path" value="${manifest.classpath}"/>
+	        </manifest>
+	    </jar>
+	</target>
+</project>
